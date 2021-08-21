@@ -195,14 +195,14 @@ int decCompensation(int units){
 void hourInc(void){
 	//Debounce
 	long interruptTime = millis();
-	int hrs = 0;
+	
 	if (interruptTime - lastInterruptTime>200){
 		printf("Interrupt 1 triggered, %x\n", hours);
 		//Fetch RTC Time
 		//Increase hours by 1, ensuring not to overflow
 		//Write hours back to the RTC
-		hrs = wiringPiI2CReadReg8(RTC, HOUR_REGISTER);
-		hours = (hrs>=23)? 0:hrs+1;
+		hours = wiringPiI2CReadReg8(RTC, HOUR_REGISTER)+1;
+		hours = hFormat(hours);
 		wiringPiI2CWriteReg8(RTC, HOUR_REGISTER, hours);
 	}
 	lastInterruptTime = interruptTime;
@@ -216,21 +216,21 @@ void hourInc(void){
  */
 void minInc(void){
 	long interruptTime = millis();
-	int mns = 0; //will put minutes from RTC
-	int hrs = 0; //will put hours from RTC
+	
 	if (interruptTime - lastInterruptTime>200){
 		printf("Interrupt 2 triggered, %x\n", mins);
 		//Fetch RTC Time
 		//Increase minutes by 1, ensuring not to overflow
 		//Write minutes back to the RTC
-		mns = wiringPiI2CReadReg8(RTC, MIN_REGISTER);
-		hrs = wiringPiI2CReadReg8(RTC, HOUR_REGISTER);
-		if(mns>=59){
-			mins =0;
-			//hours +1 but if hours = 23 then 0
-		}else{
-			mins = mns+1;
+		mins=wiringPiI2CReadReg8(RTC,MIN_REGISTER)+1;
+		
+		if(mins>=60){
+			hours=wiringPiI2CReadReg8(RTC,HOUR_REGISTER)+1;
+			hours=hFormat(hours);
+			wiringPiI2CWriteReg8(RTC, HOUR_REGISTER, hours);	
+			mins=0;
 		}
+		
 		wiringPiI2CWriteReg8(RTC, MIN_REGISTER, mins);
 	}
 	lastInterruptTime = interruptTime;
