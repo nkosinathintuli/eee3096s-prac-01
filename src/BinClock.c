@@ -103,6 +103,7 @@ int main(void){
 		//Write your logic here
 		hours = wiringPiI2CReadReg8(RTC, HOUR_REGISTER);
 		mins = wiringPiI2CReadReg8(RTC, MIN_REGISTER);
+		secs = wiringPiI2CReadReg8(RTC, SEC_REGISTER);
 		//Toggle Seconds LED Write your logic here
 		digitalWrite(LED, state);
 
@@ -230,7 +231,7 @@ void minInc(void){
 		}else{
 			mins = mns+1;
 		}
-		wiringPiI2CWriteReg8(RTC, MIN_REGISTER, mins)
+		wiringPiI2CWriteReg8(RTC, MIN_REGISTER, mins);
 	}
 	lastInterruptTime = interruptTime;
 }
